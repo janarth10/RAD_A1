@@ -1,18 +1,14 @@
 #!/usr/bin/env ruby
 
 require 'nokogiri'
+require 'optparse'
 
-command = gets.chomp.split(" ")
-if command.size == 3 and command[0] == std_num and command[1] == "-xml"
-	puts "xml option"
-        doc = Nokogiri::XML(File.open(command[2]))
-	doc.xpath("//record").each do |i|
-		puts i
-	end
-elsif command.size == 2 and command[0] == std_num and command[1] == "help"
-	puts "help"
-elsif command.size == 3 and command[0] == std_num and command[1] == "help"
-        puts "specific help"
-else
-	puts "invalid command"
-end
+options = {}
+OptionParser.new do |opt|
+	opt.on("--xml [FILENAME]", "loads given filename, or uses first xml file in directory if flag not used") { |o|
+		options[:xml_file] = o}
+	opt.on("--name FIRST/LAST NAME", "Searches for emails with the given name") { |o| options[:name] = o}
+  opt.on("--ip IP ADDRESS", "Searches for email with the given ip address") { |o| options[:ip_addr] = o}
+end.parse!
+
+
