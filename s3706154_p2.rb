@@ -74,11 +74,15 @@ begin
   end
 
   def extract_tag_and_value(str)
-    end_of_first_tag = str.index(">")
-    beg_of_second_tag = str.index("</")
-
+    value = ""
+    end_of_first_tag = str.index("/>")
+    if end_of_first_tag.nil?
+      end_of_first_tag = str.index(">")
+      beg_of_second_tag = str.index("</")
+      value = "#{str[end_of_first_tag+1..beg_of_second_tag-1]}"
+    end
     tag = "\"#{str[1..end_of_first_tag-1]}\""
-    value = "#{str[end_of_first_tag+1..beg_of_second_tag-1]}"
+
     if tag != "\"id\""
       value = "\"#{value}\""
     end
