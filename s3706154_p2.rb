@@ -14,12 +14,18 @@ begin
 
   if options.has_key?(:xml_file)
     file_name = options[:xml_file]
+    if !File.exists?(file_name)
+      raise "XML file does not exist: #{file_name}"
+    end
   else
     # check for first xml file if not provided
     Dir.entries(".").each do |entry|
       if entry.to_s.chars.last(4).join == ".xml"
         file_name = entry.to_s
       end
+    end
+    if file_name.nil?
+      raise "XML file does not exist in directory"
     end
   end
 
