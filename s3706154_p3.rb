@@ -37,6 +37,7 @@ begin
   first_names = doc.xpath("//first_name")
   last_names = doc.xpath("//last_name")
   ip_addr_lst = doc.xpath("//ip_address")
+  dates_lst = doc.xpath("//send_date")
 
   # filtering records
   if options.has_key?(:name)
@@ -48,7 +49,8 @@ begin
         first_names.delete(first_names[i])
         last_names.delete(last_names[i])
         ip_addr_lst.delete(ip_addr_lst[i])
-      elsif
+        dates_lst.delete(dates_lst[i])
+      else
         i += 1
       end
     end
@@ -59,14 +61,41 @@ begin
     nodes.size.times do
       if ip_addr_lst[i].children.to_s.casecmp(options[:ip_addr]) != 0
         nodes.delete(nodes[i])
-        first_names.delete(first_names[i])
-        last_names.delete(last_names[i])
         ip_addr_lst.delete(ip_addr_lst[i])
-      elsif
-      i += 1
+        dates_lst.delete(dates_lst[i])
+      else
+        i += 1
       end
     end
   end
+
+  if options.has_key?(:before)
+    i = 0
+    nodes.size.times do
+      send_date = Date.parse(dates_lst[i].children.to_s)
+      puts send_date
+      if (send_date <=> options[:before]) == 1
+        nodes.delete(nodes[i])
+        dates_lst.delete(dates_lst[i])
+      else
+        i += 1
+      end
+    end
+  end
+
+  if options.has_key?(:after)
+    i = 0
+    nodes.size.times do
+      send_date = Date.parse(dates_lst[i].children.to_s)
+      if (send_date <=> options[:after]) == -1
+        nodes.delete(nodes[i])
+        dates_lst.delete(dates_lst[i])
+      else
+        i += 1
+      end
+    end
+  end
+
 
   # input: nodeset of Nokogiri::XML::Element
   def puts_xml_to_json(arr)
