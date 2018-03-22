@@ -25,7 +25,6 @@ begin
 
   doc = Nokogiri::XML(open(file_name))
   nodes =  doc.xpath("//record")
-  nodes = nodes[0..3]
   first_names = doc.xpath("//first_name")
   last_names = doc.xpath("//last_name")
   ip_addr_lst = doc.xpath("//ip_address")
