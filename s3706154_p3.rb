@@ -5,6 +5,14 @@ require 'optparse'
 require 'date'
 
 options = {}
+MONDAY = ["mon", "monday"]
+TUESDAY = ["tues", "tuesday"]
+WEDNESDAY = ["wed", "wednesday"]
+THURSDAY = ["thurs", "thursday"]
+FRIDAY = ["fri", "friday"]
+SATURDAY = ["sat", "saturday"]
+SUNDAY = ["sun", "sunday"]
+
 begin
   OptionParser.new do |opt|
     opt.on("--xml [FILENAME]", "loads given filename, or uses first xml file in directory if flag not used") { |o|
@@ -13,7 +21,7 @@ begin
     opt.on("--ip IP ADDRESS", "Searches for emails with the given ip address") { |o| options[:ip_addr] = o}
     opt.on("--before DATE", "Searches for emails before given date") { |o| options[:before] = Date.new(*o.split("-").map{ |s| s.to_i }) }
     opt.on("--after DATE", "Searches for emails after given date") { |o| options[:after] = Date.new(*o.split("-").map{ |s| s.to_i }) }
-    opt.on("--day DAY", "Searches for emails on given day") { |o| options[:day] = o}
+    opt.on("--day DAY", "Searches for emails on given day") { |o| options[:day] = o.downcase}
   end.parse!
 
   if options.has_key?(:before) and options.has_key?(:after) and (options[:before] <=> options[:after]) == -1
@@ -33,7 +41,6 @@ begin
 
   doc = Nokogiri::XML(open(file_name))
   nodes =  doc.xpath("//record")
-  nodes = nodes[0..3]
   first_names = doc.xpath("//first_name")
   last_names = doc.xpath("//last_name")
   ip_addr_lst = doc.xpath("//ip_address")
@@ -96,6 +103,30 @@ begin
     end
   end
 
+  if options.has_key?(:day)
+    i = 0
+    nodes.size.times do
+      send_date = Date.parse(dates_lst[i].children.to_s)
+      if MONDAY.include?(options[:day]) and send_date.monday?
+        i += 1
+      elsif TUESDAY.include?(options[:day]) and send_date.tuesday?
+        i += 1
+      elsif WEDNESDAY.include?(options[:day]) and send_date.wednesday?
+        i += 1
+      elsif THURSDAY.include?(options[:day]) and send_date.thursday?
+        i += 1
+      elsif FRIDAY.include?(options[:day]) and send_date.friday?
+        i += 1
+      elsif SATURDAY.include?(options[:day]) and send_date.saturday?
+        i += 1
+      elsif SUNDAY.include?(options[:day]) and send_date.sunday?
+        i += 1
+      else
+        nodes.delete(nodes[i])
+        dates_lst.delete(dates_lst[i])
+      end
+    end
+  end
 
   # input: nodeset of Nokogiri::XML::Element
   def puts_xml_to_json(arr)
