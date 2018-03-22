@@ -9,12 +9,12 @@ begin
     opt.on("--xml [FILENAME]", "loads given filename, or uses first xml file in directory if flag not used") { |o|
       options[:xml_file] = o}
     opt.on("--name FIRST/LAST NAME", "Searches for emails with the given name") { |o| options[:name] = o}
-    opt.on("--ip IP ADDRESS", "Searches for email with the given ip address") { |o| options[:ip_addr] = o}
+    opt.on("--ip IP ADDRESS", "Searches for emails with the given ip address") { |o| options[:ip_addr] = o}
   end.parse!
 
   if options.has_key?(:xml_file)
     file_name = options[:xml_file]
-  elsif
+  else
     # check for first xml file if not provided
     Dir.entries(".").each do |entry|
       if entry.to_s.chars.last(4).join == ".xml"
@@ -39,7 +39,7 @@ begin
         first_names.delete(first_names[i])
         last_names.delete(last_names[i])
         ip_addr_lst.delete(ip_addr_lst[i])
-      elsif
+      else
         i += 1
       end
     end
@@ -53,8 +53,8 @@ begin
         first_names.delete(first_names[i])
         last_names.delete(last_names[i])
         ip_addr_lst.delete(ip_addr_lst[i])
-      elsif
-      i += 1
+      else
+        i += 1
       end
     end
   end
